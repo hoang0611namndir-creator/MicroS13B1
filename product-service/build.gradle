@@ -1,0 +1,54 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Quản lý version tập trung qua Spring Cloud BOM
+ext {
+    set('springCloudVersion', "2023.0.1")
+}
+
+dependencies {
+    // Web (REST API)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // JPA + DB
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    // Nếu dùng H2 để test nhanh khong can cai MySQL, bo comment dong duoi:
+    // runtimeOnly 'com.h2database:h2'
+
+    // === Eureka Client ===
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // Actuator để Eureka Dashboard hiển thị health status chính xác
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Lombok (tùy chọn, giảm code boilerplate)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
